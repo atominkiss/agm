@@ -1,0 +1,166 @@
+run:
+  tests: false
+  # default concurrency is a available CPU number
+  concurrency: 4
+  #  # timeout for analysis, e.g. 30s, 5m, default is 1m
+  deadline: 5m
+#  # exit code when at least one issue was found, default is 1
+#  issues-exit-code: 1
+#  # list of build tags, all linters use it. Default is empty list.
+#  build-tags:
+#    - mytag
+#  skip-dirs:
+#    - tests
+#    - pkg/golinters/goanalysis/(checker|passes)
+#  skip-files:
+#    - ".*\\.my\\.go$"
+#    - lib/bad.go
+
+linters-settings:
+  varnamelen:
+    min-name-length: 2
+  goimports:
+    local-prefixes: agm
+  govet:
+
+  #    settings:
+  #      printf:
+  #        funcs:
+  #          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Infof
+  #          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Warnf
+  #          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf
+  #          - (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
+  gofmt:
+    # simplify code: gofmt with `-s` option, true by default
+    simplify: true
+  gocyclo:
+    min-complexity: 5
+  dupl:
+    threshold: 100
+  goconst:
+    min-len: 2
+    min-occurrences: 2
+  unused:
+    # treat code as a program (not a library) and report unused exported identifiers; default is false.
+    # XXX: if you enable this setting, unused will report a lot of false-positives in text editors:
+    # if it's called for subdir of a project it can't find funcs usages. All text editor integrations
+    # with golangci-lint call it on a directory with the changed file.
+
+  unparam:
+    # Inspect exported functions, default is false. Set to true if no external program/library imports your code.
+    # XXX: if you enable this setting, unparam will report a lot of false-positives in text editors:
+    # if it's called for subdir of a project it can't find external interfaces. All text editor integrations
+    # with golangci-lint call it on a directory with the changed file.
+    check-exported: false
+  nakedret:
+    # make an issue if func has more lines of code than this setting and it has naked returns; default is 30
+    max-func-lines: 30
+  lll:
+    line-length: 150
+    tab-width: 1
+  gocritic:
+    enabled-tags:
+      - performance
+      - style
+      - experimental
+    disabled-checks:
+      - wrapperFunc
+      - dupImport # https://github.com/go-critic/go-critic/issues/845
+  errcheck:
+    # report about not checking of errors in type assetions: `a := b.(MyStruct)`;
+    # default is false: such cases aren't reported by default.
+    check-type-assertions: false
+    # report about assignment of errors to blank identifier: `num, _ := strconv.Atoi(numStr)`;
+    # default is false: such cases aren't reported by default.
+    check-blank: false
+    # path to a file containing a list of functions to exclude from checking
+    # see https://github.com/kisielk/errcheck#excluding-functions for details
+    #exclude: /path/to/file.txt
+#  prealloc:
+#    # XXX: we don't recommend using this linter before doing performance profiling.
+#    # For most programs usage of prealloc will be a premature optimization.
+#
+#    # Report preallocation suggestions only on simple loops that have no returns/breaks/continues/gotos in them.
+#    # True by default.
+#    simple: true
+#    range-loops: true # Report preallocation suggestions on range loops, true by default
+#    for-loops: false # Report preallocation suggestions on for loops, false by default
+#  depguard:
+#    list-type: blacklist
+#    packages:
+#      # logging is allowed only by logutils.Log, logrus
+#      # is allowed to use only in logutils package
+#      - github.com/sirupsen/logrus
+#    packages-with-error-messages:
+#      github.com/sirupsen/logrus: "logging is allowed only by logutils.Log"
+
+linters:
+  enable-all: true
+  disable:
+    - asasalint
+    - asciicheck
+    - deadcode
+    - errname
+    - forbidigo
+    - gochecknoinits
+    # - gochecksumtype
+    - gocyclo
+    - godox
+    - golint
+    - goerr113
+    - goimports
+    - gofumpt
+    - gomnd
+    - importas
+    - gomodguard # отключено, если будут какие то запрещенные зависимости можно будет включить с настройкой, пока юзлес
+    - interfacer
+    - lll
+    - maintidx
+    - mirror
+    - misspell
+    - nlreturn
+    - nilnil
+    - nolintlint
+    - nonamedreturns
+    - nosnakecase
+    - depguard
+    - nosprintfhostport
+    - paralleltest
+    - revive # очень объемная штука, требует большой настройки и в большинстве кейсов дублирует включенные линтеры
+    - rowserrcheck
+    - sqlclosecheck
+    - tagalign
+    - exhaustivestruct
+    - ifshort
+    - scopelint
+    - tagliatelle
+    - varcheck
+    - wsl
+    - errchkjson
+    - zerologlint
+    - structcheck
+    - maligned
+
+issues:
+  exclude-rules:
+    - text: "weak cryptographic primitive"
+      linters:
+        - gosec
+    # Exclude lll issues for long lines with go:generate
+    - linters:
+        - lll
+      source: "^//go:generate "
+
+# golangci.com configuration
+# https://github.com/golangci/golangci/wiki/Configuration
+
+# output configuration options
+#output:
+#  # colored-line-number|line-number|json|tab|checkstyle|code-climate, default is "colored-line-number"
+#  format: colored-line-number
+#
+#  # print lines of code with issue, default is true
+#  print-issued-lines: true
+#
+#  # print linter name in the end of issue text, default is true
+#  print-linter-name: true
