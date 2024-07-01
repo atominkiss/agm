@@ -8,7 +8,6 @@ import (
 	"log"
 )
 
-// TODO: вынести в отдельный пакет работы с базой данных
 // saveToDatabase saves JSON data to a PostgreSQL database.
 func SaveToDatabase(jsonData []byte) {
 	connStr := "user=yourusername dbname=yourdbname sslmode=disable"
@@ -39,7 +38,6 @@ func SaveToDatabase(jsonData []byte) {
 	}
 }
 
-// FetchJSONFromDB TODO: вынести в отдельный пакет работы с базой данных
 // FetchJSONFromDB retrieves JSON data from a PostgreSQL database.
 func FetchJSONFromDB(content string) ([]byte, error) {
 	db, err := sql.Open("postgres", "user=yourusername dbname=yourdbname sslmode=disable")
